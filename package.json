@@ -1,0 +1,22 @@
+{
+  "name": "web-front-end_notes",
+  "version": "1.0.0",
+  "description": "helps me study web front end knowledge",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Freemanysz/web-front-end_notes.git"
+  },
+  "keywords": [
+    "webFrontEnd"
+  ],
+  "author": "Freemanyu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Freemanysz/web-front-end_notes/issues"
+  },
+  "homepage": "https://github.com/Freemanysz/web-front-end_notes#readme"
+}
