@@ -54,8 +54,12 @@
         .domain(countriesName)
         .range([0, chartWidth])
         .padding(0.1);
+    const textScale = d3.scaleBand()
+        .domain(countriesName)
+        .range([xScale.bandwidth() / 3, chartWidth + xScale.bandwidth() / 3])
+        .padding(0.1);
     console.log(xScale);
-    
+    console.log(textScale);
     const svg = d3.select(".chart")
         .attr("width", chartWidth)
         .attr("height", chartHeight)
@@ -96,12 +100,25 @@ bar.append("text")
     .style("fill", "steelblue");
 
     bar.append("text")
-    .attr("x", xScale)
+    .attr("x", textScale)
     .attr("y", function(d, i){
         return chartHeight - countriesData[i];
     })
     .attr("dy", "1em")
     .text(function(d, i){
+        return countriesData[i];
+    })
+    .style("fill", "white");
+
+    var rect = bar.selectAll("#bar");
+    rect.transition()
+    .delay(function(d, i) {
+        return i * 10;
+    })
+    .attr("y", function(d, i){
+        return chartHeight - countriesData[i];
+    })
+    .attr("height",  function(d, i){
         return countriesData[i];
     });
 
