@@ -22,26 +22,9 @@
 <svg class="chart"></svg>
 <script src="https://d3js.org/d3.v4.js"></script>
 <script>
-    const chartWidth = 900;
-    const chartHeight = 300;
-    const dataset = {
-        "India": 37,
-        "Probe": 54,
-        "Anguilla": 15,
-        "Germany": 76,
-        "Denmark": 133,
-        "Alps": 245,
-        "CEE": 109,
-        "USA": 46,
-        "Nordic": 97,
-        "China": 63,
-        "Switzerland": 89,
-        "Canada": 37,
-        "UK": 74,
-        "ARtest": 84,
-        "NJtest": 25,
-        "France": 49
-    };
+    const chartWidth = 1000;
+    const chartHeight = 500;
+    const dataset = {"India": [37, 202] ,"Probe": [54, 40] ,"Anguilla": [15, 90] ,"Germany": [76, 140] ,"Denmark": [133, 89], "Alps": [245, 89], "CEE": [109, 98], "USA": [46, 160], "Nordic": [97, 20], "China": [63, 90], "Switzerland": [89, 308], "Canada": [37, 209], "UK": [74, 190], "ARtest": [84, 39], "NJtest": [25, 40], "France": [49, 89]};
     var countriesName = [];//restore countries name
     var countriesData = [];//restore countries data
     for (var key in dataset) {
@@ -54,9 +37,17 @@
         .domain(countriesName)
         .range([0, chartWidth])
         .padding(0.1);
+    const xScale2 = d3.scaleBand()
+        .domain(countriesName)
+        .range([xScale.bandwidth() / 2, chartWidth + xScale.bandwidth() / 2])
+        .padding(0.1);
     const textScale = d3.scaleBand()
         .domain(countriesName)
-        .range([xScale.bandwidth() / 3, chartWidth + xScale.bandwidth() / 3])
+        .range([(xScale.bandwidth() / 8), (chartWidth + xScale.bandwidth() / 8)])
+        .padding(0.1);
+    const textScale2 = d3.scaleBand()
+        .domain(countriesName)
+        .range([(xScale.bandwidth() / 2) + (xScale.bandwidth() / 8), (xScale.bandwidth() / 2) + (chartWidth + xScale.bandwidth() / 8)])
         .padding(0.1);
     console.log(xScale);
     console.log(textScale);
@@ -91,22 +82,44 @@ bar.append("text")
     bar.append("rect")
     .attr("x", xScale)
     .attr("y", function(d, i){
-        return chartHeight - countriesData[i];
+        return chartHeight - countriesData[i][0];
     })
-    .attr("width", xScale.bandwidth())
+    .attr("width", xScale.bandwidth() / 2)
     .attr("height", function(d, i){
-        return countriesData[i];
+        return countriesData[i][0];
     })
     .style("fill", "steelblue");
+
+    bar.append("rect")
+    .attr("x", xScale2)
+    .attr("y", function(d, i){
+        return chartHeight - countriesData[i][1];
+    })
+    .attr("width", xScale.bandwidth() / 2)
+    .attr("height", function(d, i){
+        return countriesData[i][1];
+    })
+    .style("fill", "blue");
 
     bar.append("text")
     .attr("x", textScale)
     .attr("y", function(d, i){
-        return chartHeight - countriesData[i];
+        return chartHeight - countriesData[i][0] - 20;
     })
     .attr("dy", "1em")
     .text(function(d, i){
-        return countriesData[i];
+        return countriesData[i][0];
+    })
+    .style("fill", "white");
+
+    bar.append("text")
+    .attr("x", textScale2)
+    .attr("y", function(d, i){
+        return chartHeight - countriesData[i][1] - 20;
+    })
+    .attr("dy", "1em")
+    .text(function(d, i){
+        return countriesData[i][1];
     })
     .style("fill", "white");
 
