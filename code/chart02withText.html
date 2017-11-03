@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Band Scale</title>
+    <style>
+        body {
+            font: 10px sans-serif;
+        }
+        h2 {
+            margin-top: 0;
+            color: grey;
+        }
+
+        .chart {
+            background-color: lightgrey;
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+<svg class="chart"></svg>
+<script src="https://d3js.org/d3.v4.js"></script>
+<script>
+    const chartWidth = 900;
+    const chartHeight = 300;
+    const margin = {top: 10, right: 20, bottom: 20, left: 20};
+    const width = svg.attr("width") - margin.left - margin.right;
+    const height = svg.attr("height") - margin.top - margin.bottom;
+    const dataset = {
+        "India": 37,
+        "Probe": 54,
+        "Anguilla": 15,
+        "Germany": 76,
+        "Denmark": 133,
+        "Alps": 245,
+        "CEE": 109,
+        "USA": 46,
+        "Nordic": 97,
+        "China": 63,
+        "Switzerland": 89,
+        "Canada": 37,
+        "UK": 74,
+        "ARtest": 84,
+        "NJtest": 25,
+        "France": 49
+    };
+    var countriesName = [];//restore countries name
+    var countriesData = [];//restore countries data
+    for (var key in dataset) {
+        countriesName.push(key);
+        countriesData.push(dataset[key]);
+    }
+    const xDomain = countriesData.length;//column count  ->  x axis
+    const data = d3.range(xDomain).map(dataset);
+
+    var svg = d3.select("svg").attr("width", chartWidth).attr("height", chartHeight);
+    var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var x = d3.scaleLinear().rangeRound([0, width]);
+    var bins = d3.histogram().domain(x.domain()).thresholds(x.ticks(20))(data);
+    var y = d3.scaleLinear().domain([0, d3.max(countriesData)]).range([height, 0]);
+    //bar
+    var bar = g.selectAll(".bar")
+    .data(bins)
+    .enter()
+    .append("g")
+    .attr("class", "bar")
+    .attr("transform", function(d){
+        return "translate(" + x(d.x0) + ", " + y(d.length) + ")";
+    });
+    //draw rect
+    bar.append("rect")
+    .attr("x", 1)
+    .attr("width", x(bins[0].x1) - x(bins[0].x0) - 1)
+    .attr("height", function(d){
+        return height - y(d.length);
+    });
+    //fill with text
+    bar.append("text")
+    .attr("dy", ".75em")
+    .attr("x", (x(bins[0].x1) - x(bins[0].x0)) / 2)
+    .attr("text-anchor", "middle")
+    .text(function(d, i){
+        return countriesData[i];
+    });
+    // const xScale = d3.scaleBand()
+    //     .domain(countriesName)
+    //     .range([0, chartWidth])
+    //     .padding(0.1);
+    
+    // const svg = d3.select(".chart")
+    //     .attr("width", chartWidth)
+    //     .attr("height", chartHeight)
+    //     .append("g")
+    //     .attr("class", "series");
+
+    // var bar = svg.selectAll("rect")
+    //     .data(countriesName)
+    //     .enter()
+    //     .append("g")
+    //     .append("rect")
+    //     .attr("x", xScale)
+    //     .attr("y", function(d, i) {
+    //         return chartHeight - countriesData[i];
+    //     })
+    //     .attr("width", xScale.bandwidth())
+    //     .attr("height", function(d, i) {
+    //         return countriesData[i];
+    //     })
+    //     .style("fill", "steelblue");
+
+    // const xAxis = d3.axisBottom(xScale);
+    // svg.append("g")
+    //     .call(xAxis)
+    //     .attr("class", "axis axis--x")
+    //     .attr("transform", "translate(0," + height + ")"); 
+    g.append("g")
+    .attr("class", "axis axis--x")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
+    </script>
+</body>
+</html>
