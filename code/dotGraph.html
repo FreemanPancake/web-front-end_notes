@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>The d3 test</title>
+	<style>
+	.main text {
+		font: 10px sans-serif;	
+	}
+	.axis line, .axis path {
+		shape-rendering: crispEdges;
+		stroke: black;
+		fill: none;
+	}
+	circle {
+		fill: steelblue;
+	}
+</style>
+<script src="https://d3js.org/d3.v4.js"></script>
+<!--  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script> -->
+</head>
+<body>
+	<div class="content">
+		<svg class="scatterChart" style="padding: 2em;"></svg>
+		<!-- /the chart goes here -->
+	</div>
+	<script>
+		var dataset = {"India": [1, 0] ,"Probe": [54, 40] ,"Anguilla": [15, 90] ,"Germany": [76, 140] ,"Denmark": [133, 89], "Alps": [245, 89], "CEE": [109, 98], "USA": [46, 160], "Nordic": [3, 0], "China": [63, 90], "Switzerland": [89, 308], "Canada": [37, 209], "UK": [74, 190], "ARtest": [2, 1], "NJtest": [25, 40], "France": [49, 89]};
+		var countryNames = [];
+		var values = [];
+		var companyNums = [];
+		var contractNums = [];
+		for (key in dataset) {
+			countryNames.push(key);
+			values.push(dataset[key]);
+			companyNums.push(dataset[key][0]);
+			contractNums.push(dataset[key][1]);
+		}
+
+		var margin = {top: 20, right: 15, bottom: 60, left: 60}
+		, width = 960 - margin.left - margin.right
+		, height = 600 - margin.top - margin.bottom;
+
+		var radius = 8;
+		var perPixelWidth = width/(d3.max(companyNums));
+		var perPixelHeight = height/(d3.max(contractNums));
+
+		var x = d3.scaleLinear()
+		.domain([0, d3.max(values, function(d) { return d[0]; }) + 10])
+		.range([ 0, width ]);
+
+		var y = d3.scaleLinear()
+		.domain([0, d3.max(values, function(d) { return d[1]; }) + 10])
+		.range([ height, 0 ]);
+
+		var svg = d3.select(".scatterChart");
+
+		var chart = svg.attr("width", width + margin.right + margin.left)
+		.attr("height", height + margin.top + margin.bottom)
+		.attr("class", "chart");
+
+		var main = chart.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+		.attr("width", width)
+		.attr("height", height)
+		.attr("class", "main");
+
+		// var tip = d3.tip()
+		// 	.attr('class', 'd3-tip')
+		// 	.offset([-10, 0])
+		// 	.html(function(d, i) {
+		// 		return "<div><span>Country:</span> <span style='color:white'>" + countryNames[i] + "</span></div>" +
+		// 			"<div><span>Company:</span> <span style='color:white'>" + d.countryNames[i][0] + "</span></div>" +
+		// 			"<div><span>contract:</span> <span style='color:white'>" + d.countryNames[i][1] + "</span></div>";
+		// 	});
+		// chart.call(tip);
+
+		var xAxis = d3.axisBottom(x);// draw the x axis
+		var xTAxis = d3.axisTop(x);// draw the x axis
+
+	    x.domain([d3.min(values, function(d) { return d[0]-radius/perPixelWidth; }), d3.max(values, function(d) { return d[0]+radius/perPixelWidth; })]);// don't want dots overlapping axis, so add in buffer to data domain
+		main.append("g")
+			.attr("transform", "translate(0," + height + ")")
+			.attr("class", "main axis company")
+			.call(xAxis);
+		main.append("g")
+			.attr("transform", "translate(0," + height + ")")
+			.append("text")
+			.attr("class", "label")
+			.attr("x", width)
+			.attr("y", -6)
+			.style("text-anchor", "end")
+			.text("CompanyNum");
+		main.append("g")
+			.attr("transform", "translate(0, 0)")
+			.attr("class", "main axis company")
+			.call(xTAxis);
+
+		var yAxis = d3.axisLeft(y);// draw the y axis
+		var yRAxis = d3.axisRight(y);
+
+		y.domain([d3.min(values, function(d) { return d[1]-radius/perPixelHeight; }), d3.max(values, function(d) { return d[1]+radius/perPixelHeight; })]);// don't want dots overlapping axis, so add in buffer to data domain
+		main.append("g")
+			.attr("transform", "translate(0,0)")
+			.attr("class", "main axis contract")
+			.call(yAxis);
+		main.append("g")
+			.append("text")
+			.attr("class", "label")
+			.attr("transform", "rotate(-90)")
+			.attr("y", 12)
+			.attr("dy", ".71em")
+			.style("text-anchor", "end")
+			.text("ContractNum");
+		main.append("g")
+			.attr("transform", "translate(" + width + ",0)")
+			.attr("class", "main axis contract")
+			.call(yRAxis);
+
+		var g = main.append("g"); 
+
+		g.selectAll("scatter-dots")
+		.data(values)
+		.enter().append("circle")
+		.attr("cx", function (d,i) { return x(d[0]); } )
+		.attr("cy", function (d) { return y(d[1]); } )
+		.attr("r", radius);
+	</script>
+</body>
+</html>
+

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>The d3 test</title>
+	<style>
+	.main text {
+		font: 10px sans-serif;	
+	}
+	.axis line, .axis path {
+		shape-rendering: crispEdges;
+		stroke: black;
+		fill: none;
+	}
+	circle {
+		fill: steelblue;
+	}
+</style>
+<script src="https://d3js.org/d3.v4.js"></script>
+<!--  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script> -->
+</head>
+<body>
+	<div class="content">
+		<svg class="scatterChart"></svg>
+		<!-- /the chart goes here -->
+	</div>
+	<script>
+		var dataset = {"India": [3, 4] ,"Probe": [54, 40] ,"Anguilla": [15, 90] ,"Germany": [76, 140] ,"Denmark": [133, 89], "Alps": [245, 89], "CEE": [109, 98], "USA": [46, 160], "Nordic": [3, 0], "China": [63, 90], "Switzerland": [89, 308], "Canada": [37, 209], "UK": [74, 190], "ARtest": [2, 1], "NJtest": [25, 40], "France": [49, 89]};
+		var countryNames = [];
+		var values = [];
+		var companyNums = [];
+		var contractNums = [];
+		var pieData = [];
+		for (key in dataset) {
+			countryNames.push(key);
+			values.push(dataset[key]);
+			companyNums.push(dataset[key][0]);
+			contractNums.push(dataset[key][1]);
+			//prepare the pie data
+			pieData.push({"nodeData": {"country": key,"value": parseInt(dataset[key][0], 10) + parseInt(dataset[key][1], 10)},"subData": [{"nodeData": {"key": "company","value": parseInt(dataset[key][0], 10)},}, {"nodeData": {"key": "contract","value": parseInt(dataset[key][1], 10)},}]});
+		}
+
+		var margin = {top: 20, right: 15, bottom: 60, left: 60}
+		, width = 1200 - margin.left - margin.right
+		, height = 700 - margin.top - margin.bottom;
+
+		var radius = 36;
+		var perPixelWidth = width/(d3.max(companyNums));
+		var perPixelHeight = height/(d3.max(contractNums));
+
+		var x = d3.scaleLinear()
+			.domain([0, d3.max(values, function(d) { return d[0]; }) + 10])
+			.range([ 0, width ]);
+
+		var y = d3.scaleLinear()
+			.domain([0, d3.max(values, function(d) { return d[1]; }) + 10])
+			.range([ height, 0 ]);
+
+		var svg = d3.select(".scatterChart");
+
+		var chart = svg.attr("width", width + margin.right + margin.left)
+			.attr("height", height + margin.top + margin.bottom)
+			.attr("class", "chart");
+
+		var main = chart.append("g")
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+			.attr("width", width)
+			.attr("height", height)
+			.attr("class", "main");
+
+		var xAxis = d3.axisBottom(x);// draw the x axis
+
+	    x.domain([d3.min(values, function(d) { return d[0]-radius/perPixelWidth; }), d3.max(values, function(d) { return d[0]+radius/perPixelWidth; })]);// don't want dots overlapping axis, so add in buffer to data domain
+		main.append("g")
+			.attr("transform", "translate(0," + height + ")")
+			.attr("class", "main axis company")
+			.call(xAxis);
+		main.append("g")
+			.attr("transform", "translate(0," + height + ")")
+			.append("text")
+			.attr("class", "label")
+			.attr("x", width)
+			.attr("y", -6)
+			.style("text-anchor", "end")
+			.text("CompanyNum");
+
+		var yAxis = d3.axisLeft(y);// draw the y axis
+		y.domain([d3.min(values, function(d) { return d[1]-radius/perPixelHeight; }), d3.max(values, function(d) { return d[1]+radius/perPixelHeight; })]);// don't want dots overlapping axis, so add in buffer to data domain
+		main.append("g")
+			.attr("transform", "translate(0,0)")
+			.attr("class", "main axis contract")
+			.call(yAxis);
+		main.append("g")
+			.append("text")
+			.attr("class", "label")
+			.attr("transform", "rotate(-90)")
+			.attr("y", 12)
+			.attr("dy", ".71em")
+			.style("text-anchor", "end")
+			.text("ContractNum");
+
+		var g = main.append("g"); 
+
+		// g.selectAll("scatter-dots")
+		// 	.data(values)
+		// 	.enter().append("circle")
+		// 	.attr("cx", function (d,i) { return x(d[0]); } )
+		// 	.attr("cy", function (d) { return y(d[1]); } )
+		// 	.attr("r", radius);
+
+		g.selectAll("scatter-dots")
+			.data(values)
+			.enter().append("g")
+			// .attr("class", "pieChart")
+			.attr("class", function (d, i) {
+				return "pieChart" + i;
+			})
+			.attr("transform", function(d, i) {
+				return "translate(" + x(d[0]) + "," + y(d[1]) + ")";
+			});
+
+		var pie_width = radius;
+		var pie_height = radius;
+		maxRadius = Math.min(pie_width, pie_height) / 2;
+
+		var multiLevelData1 = setMultiLevelData(pieData);
+		var count = 0;
+		for (var i = 0; i < multiLevelData1[0].length; i++) {
+			
+			var testArr = [multiLevelData1[0][i]];
+			var multiLevelData = setMultiLevelData(testArr);
+			console.log(multiLevelData);
+
+			var pieWidth = parseInt(maxRadius / multiLevelData.length);
+
+			var color20 = d3.scaleOrdinal(d3.schemeCategory20);
+			var color10 = d3.scaleOrdinal(d3.schemeCategory10);
+
+			var pieChart = d3.select(".pieChart" + i)
+			// .style("padding", "2em")
+			.append("g")
+			// .attr("transform", "translate(" + pie_width / 2 + "," + pie_height / 2 + ")");
+			.attr("transform", "translate(0, 0)");
+			
+			for (var j = 0; j < multiLevelData.length; j++) {
+				var _cData = multiLevelData[j];
+				drawPieChart(_cData, j, i);
+				console.log(_cData);
+			}
+			count++;
+		}
+
+
+        /*Pie Chart function start*/
+		function setMultiLevelData(data) {
+			if (data == null){
+				return;
+			}
+			var tempData = [];
+			var level = data.length,
+			counter = 0,
+			index = 0,
+			currentLevelData = [],
+			queue = [];
+			for (var i = 0; i < data.length; i++) {
+				queue.push(data[i]);
+			};
+
+			while (!queue.length == 0) {
+				var node = queue.shift();
+				currentLevelData.push(node);
+				level--;
+
+				if (node.subData) {
+					for (var i = 0; i < node.subData.length; i++) {
+						queue.push(node.subData[i]);
+						counter++;
+					};
+				}
+				if (level == 0) {
+					level = counter;
+					counter = 0;
+					tempData.push(currentLevelData);
+					currentLevelData = [];
+				}
+			}
+			return tempData;
+		}
+
+		function drawPieChart(_data, index, num) {
+			var pie = d3.pie()
+			// .padAngle(0.01)
+			.sort(null)
+			.value(function(d) {
+				return d.nodeData.value;
+			});
+			var arc = d3.arc()
+			.outerRadius((index + 1) * pieWidth)
+			.innerRadius(0);
+
+			var g = pieChart.selectAll(".arc" + index)
+			.data(pie(_data))
+			.enter().append("g")
+			.attr("class", "arc" + index);
+
+			g.append("path").attr("d", arc)
+			.style("fill", function(d, i) {
+				//return color(d.data.nodeData.key);
+				if(index == 0) {
+					return "#fff";
+					// return color10(i);
+				} else if (index == 1){
+					// return color10(i);
+					return color20(i);
+				} else if(index == 2) {
+					return color20(i);
+				}
+			});
+
+			g.append("text")
+			// .attr("transform", function(d) {
+			// 	//return "translate(" + arc.centroid(d) + ")";
+			// 	return "translate(" + arc.innerRadius(function(d){return d.innerRadius;}) + ")";
+			// })
+			.attr("transform", function(d, i, j) {
+				var pw = pieWidth;
+				var arc1 = arc.innerRadius(0)
+				.outerRadius((index + 1) * pw);
+				if (d.data.nodeData.country) {
+					return "translate(0, 0)";
+				} else if (!d.data.nodeData.country){
+					return "translate(" + arc1.centroid(d) + ")";
+				}
+			})
+			.attr("dy", ".25em").style("text-anchor", "middle")
+			.text(function(d) {
+				// if (d.data.nodeData.country && d.data.nodeData.value > 40) {
+				if (d.data.nodeData.country) {
+					return " ";
+					// return d.data.nodeData.country;
+				// } else if (!d.data.nodeData.country && d.data.nodeData.value > 20){
+				} else if (!d.data.nodeData.country){
+					// return d.data.nodeData.value;
+					return d.data.nodeData.value;
+				} else {
+					return " ";
+				}
+			});
+		}
+	</script>
+</body>
+</html>
+

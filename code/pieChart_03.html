@@ -1,0 +1,475 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+<!-- <style>
+body {
+	font: 1em sans-serif;
+}
+
+.arc path {
+	stroke: #fff;
+}
+
+</style> -->
+
+<body>
+	<svg class="pieChart"></svg>
+	<script src="https://1.www.s81c.com/common/v18/js/d3.js"></script>
+	<script>
+		var data = [{
+				"nodeData": {
+					"country": "Switzerland",
+					"value": 48
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 12
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 36
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "New Zealand",
+					"value": 8
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 2
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 6
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "Australia",
+					"value": 11
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 3
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 8
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "Austria",
+					"value": 3
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 2
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 1
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "Netherlands",
+					"value": 27
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 4
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 23
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "Canada",
+					"value": 130
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 17
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 113
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "Slovakia",
+					"value": 41
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 8
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 33
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "Colombia",
+					"value": 3
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 1
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 2
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "Czech Republic",
+					"value": 23
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 2
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 21
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "France",
+					"value": 48
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 8
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 40
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "Germany",
+					"value": 143
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 21
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 122
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "India",
+					"value": 18
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 3
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 15
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "Italy",
+					"value": 4
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 1
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 4
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "Angola",
+					"value": 19
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 3
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 16
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "Nordic",
+					"value": 156
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 53
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 103
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "Probe",
+					"value": 5
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 4
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 1
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "South Africa",
+					"value": 1
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 1
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 0
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "Cyprus",
+					"value": 17
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 6
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 11
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "Ireland",
+					"value": 135
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 18
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 117
+					},
+				}]
+			}, {
+				"nodeData": {
+					"country": "USA",
+					"value": 762
+				},
+				"subData": [{
+					"nodeData": {
+						"key": "company",
+						"value": 182
+					},
+				}, {
+					"nodeData": {
+						"key": "contract",
+						"value": 580
+					},
+				}]
+			}];
+
+
+
+		var width = 650,
+		height = 650,
+		maxRadius = Math.min(width, height) / 4;
+
+		var svg = d3.select(".pieChart")
+		.style("padding", "2em")
+		.attr("width", width)
+		.attr("height", height)
+		.append("g")
+		.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+		function setMultiLevelData(data) {
+			
+			if (data == null){
+				return;
+			}
+			var tempData = [];
+			var level = data.length,
+			counter = 0,
+			index = 0,
+			currentLevelData = [],
+			queue = [];
+			for (var i = 0; i < data.length; i++) {
+				queue.push(data[i]);
+			};
+
+			while (!queue.length == 0) {
+				var node = queue.shift();
+				currentLevelData.push(node);
+				level--;
+
+				if (node.subData) {
+					for (var i = 0; i < node.subData.length; i++) {
+						queue.push(node.subData[i]);
+						counter++;
+					};
+				}
+				if (level == 0) {
+					level = counter;
+					counter = 0;
+					tempData.push(currentLevelData);
+					currentLevelData = [];
+				}
+			}
+			return tempData;
+		}
+
+		function drawPieChart(_data, index) {
+			var pie = d3.pie()
+			// .padAngle(0.01)
+			.sort(null)
+			.value(function(d) {
+				return d.nodeData.value;
+			});
+			var arc = d3.arc()
+			.outerRadius((index + 1) * pieWidth)
+			.innerRadius(0);
+
+			var g = svg.selectAll(".arc" + index)
+			.data(pie(_data))
+			.enter().append("g")
+			.attr("class", "arc" + index);
+
+			g.append("path").attr("d", arc)
+			.style("fill", function(d, i) {
+				//return color(d.data.nodeData.key);
+				if(index == 0) {
+					return "#fff";
+					// return color10(i);
+				} else if (index == 1){
+					// return color10(i);
+					return color20(i);
+				} else if(index == 2) {
+					return color20(i);
+				}
+			});
+
+			g.append("text")
+			// .attr("transform", function(d) {
+			// 	//return "translate(" + arc.centroid(d) + ")";
+			// 	return "translate(" + arc.innerRadius(function(d){return d.innerRadius;}) + ")";
+			// })
+			.attr("transform", function(d, i, j) {
+				var pw = pieWidth;
+				var arc1 = arc.innerRadius(0)
+				.outerRadius((index + 1) * pw -4);
+				if (d.data.nodeData.country) {
+					return "translate(0, 0)";
+				} else if (!d.data.nodeData.country){
+					return "translate(" + arc1.centroid(d) + ")";
+				}
+			})
+			.attr("dy", ".35em").style("text-anchor", "middle")
+			.text(function(d) {
+				// if (d.data.nodeData.country && d.data.nodeData.value > 40) {
+				if (d.data.nodeData.country) {
+					// return " ";
+					return d.data.nodeData.country;
+				// } else if (!d.data.nodeData.country && d.data.nodeData.value > 20){
+				} else if (!d.data.nodeData.country){
+					// return d.data.nodeData.value;
+					return d.data.nodeData.key + ": " + d.data.nodeData.value;
+				} else {
+					return " ";
+				}
+			});
+		}
+
+		var multiLevelData1 = setMultiLevelData(data);
+		
+		for (var i = 0; i < multiLevelData1[0].length; i++) {
+			var testArr = [];
+			testArr.push(multiLevelData1[0][i]);
+			var multiLevelData = setMultiLevelData(testArr);
+			console.log(multiLevelData);
+
+			var pieWidth = parseInt(maxRadius / multiLevelData.length) - multiLevelData.length;
+
+			var color20 = d3.scaleOrdinal(d3.schemeCategory20);
+			var color10 = d3.scaleOrdinal(d3.schemeCategory10);
+			
+			for (var j = 0; j < multiLevelData.length; j++) {
+				var _cData = multiLevelData[j];
+				console.log(_cData);
+				drawPieChart(_cData, j);
+			}
+		}
+		
+	</script>
+</body>
+</html>
