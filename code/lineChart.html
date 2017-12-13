@@ -1,0 +1,277 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>LineChart</title>
+</head>
+	<script src="http://d3js.org/d3.v4.js" charset="utf-8"></script>
+	<style>
+	.axis path {
+	    fill: none;
+	    stroke: #777;
+	    shape-rendering: crispEdges;
+	}
+	.axis text {
+	    font-family: Lato;
+	    font-size: 13px;
+	}
+	.overlay {
+	  fill: none;
+	  opacity: 0.1;
+	  pointer-events: all;
+	}
+	</style>
+<body>
+<div>
+	<svg id="lineChart"></svg>
+</div>
+<script>
+	var data = [
+	// {
+	//     "sale": 202,
+	//     "year": 2000
+	// }, {
+	//     "sale": 215,
+	//     "year": 2001
+	// }, {
+	//     "sale": 179,
+	//     "year": 2002
+	// }, {
+	//     "sale": 199,
+	//     "year": 2003
+	// }, {
+	//     "sale": 134,
+	//     "year": 2004
+	// }, {
+	//     "sale": 176,
+	//     "year": 2005
+	// }, {
+	//     "sale": 27,
+	//     "year": 2006
+	// }, {
+	//     "sale": 39,
+	//     "year": 2007
+	// }, {
+	//     "sale": 98,
+	//     "year": 2008
+	// }, {
+	//     "sale": 56,
+	//     "year": 2009
+	// }, {
+	//     "sale": 34,
+	//     "year": 2010
+	// }, 
+	{
+	    "sale": 257,
+	    "year": 2011
+	}, {
+	    "sale": 95,
+	    "year": 2012
+	}, {
+	    "sale": 75,
+	    "year": 2013
+	}, {
+	    "sale": 35,
+	    "year": 2014
+	}, {
+	    "sale": 56,
+	    "year": 2015
+	}, {
+	    "sale": 167,
+	    "year": 2016
+	}, {
+	    "sale": 345,
+	    "year": 2017
+	}];
+
+	var data2 = [
+	// {
+	//     "sale": 276,
+	//     "year": 2000
+	// }, {
+	//     "sale": 205,
+	//     "year": 2001
+	// }, {
+	//     "sale": 139,
+	//     "year": 2002
+	// }, {
+	//     "sale": 109,
+	//     "year": 2003
+	// }, {
+	//     "sale": 133,
+	//     "year": 2004
+	// }, {
+	//     "sale": 196,
+	//     "year": 2005
+	// }, {
+	//     "sale": 127,
+	//     "year": 2006
+	// }, {
+	//     "sale": 99,
+	//     "year": 2007
+	// }, {
+	//     "sale": 23,
+	//     "year": 2008
+	// }, {
+	//     "sale": 90,
+	//     "year": 2009
+	// }, {
+	//     "sale": 56,
+	//     "year": 2010
+	// }, 
+	{
+	    "sale": 35,
+	    "year": 2011
+	}, {
+	    "sale": 298,
+	    "year": 2012
+	}, {
+	    "sale": 329,
+	    "year": 2013
+	}, {
+	    "sale": 350,
+	    "year": 2014
+	}, {
+	    "sale": 89,
+	    "year": 2015
+	}, {
+	    "sale": 147,
+	    "year": 2016
+	}, {
+	    "sale": 305,
+	    "year": 2017
+	}];
+
+	var getData = function(data) {
+		var dataObj = {};
+		dataObj.sales = [];
+		dataObj.years = [];
+		for (let i = 0; i < data.length; i++) {
+			dataObj.sales.push(data[i].sale);
+			dataObj.years.push(data[i].year);
+		}
+		return dataObj;
+	}
+	var dataset = getData(data);
+	var dataset2 = getData(data2);
+
+	var WIDTH = 800;
+	var HEIGHT = 400;
+	var MARGINS = {top: 20, right: 20, bottom: 20, left: 50};
+	var PADDING = {top: 0, right: 60, bottom: 0, left: 0}
+	var svg = d3.selectAll("#lineChart")
+	.attr("width", WIDTH)
+	.attr("height", HEIGHT)
+	.style("padding", "2em")
+	.style("margin", "20 20 20 50");
+
+	//draw x axis
+	var xScale = d3.scaleLinear()
+	.range([MARGINS.left, WIDTH - MARGINS.right])
+	.domain([(d3.min(dataset.years)-1), (d3.max(dataset.years)+1)]);
+	var xAxis = d3.axisBottom(xScale);
+	svg.append("g")
+	.attr("id", "x-axes")
+	.attr("transform", "translate(0, " + (HEIGHT - MARGINS.bottom) + ")")
+	.call(xAxis);
+	//draw y axis
+	var yScale = d3.scaleLinear()
+	.range([HEIGHT - MARGINS.top, MARGINS.bottom])
+	// .domain([d3.min([d3.min(dataset.sales), d3.min(dataset2.sales)]), d3.max([d3.max(dataset.sales), d3.max(dataset2.sales)])]);
+	.domain([0, d3.max([d3.max(dataset.sales), d3.max(dataset2.sales)])]);
+	var yAxis = d3.axisLeft(yScale);
+	svg.append("g")
+	.attr("id", "y-axes")
+	.attr("transform", "translate(" + (MARGINS.left) + ", 0)")
+	.call(yAxis);
+
+	//Constructs a new line generator
+	var lineGenerator = d3.line()
+	.x(function(d){
+		return xScale(d.year);
+	})
+	.y(function(d){
+		return yScale(d.sale);
+	})
+	.curve(d3.curveCatmullRom.alpha(0.5));
+
+	//append the line path to the svg
+	//company line
+	svg.append("path")
+	.attr("id", "line")
+	.attr("d", lineGenerator(data))
+	.attr("stroke", "green")
+	.attr("stroke-width", 4)
+	.attr("fill", "none");
+	svg.append("text")
+	.attr("transform", function(d, i) {
+		return "translate("+ (xScale(dataset.years[dataset.years.length - 1])) + ", " + yScale(dataset.sales[dataset.sales.length - 1]) + ")";
+	})
+	.style("text-anchor", "end")
+	.text("Company");
+
+	//contract line
+	svg.append("path")
+	.attr("id", "line2")
+	.attr("d", lineGenerator(data2))
+	.attr("stroke", "blue")
+	.attr("stroke-width", 4)
+	.attr("fill", "none")
+	svg.append("text")
+	.attr("transform", function(d, i) {
+		return "translate("+ (xScale(dataset2.years[dataset2.years.length - 1])) + ", " + yScale(dataset2.sales[dataset2.sales.length - 1]) + ")";
+	})
+	.style("text-anchor", "end")
+	.text("Contract");
+
+	var bisectDate = d3.bisector(function(d) { return xScale(d.year); }).left;
+	var focus = svg.append("g")
+		.attr("id", "focus1")
+		.attr("class", "focus")
+		.style("display", "none");
+	focus.append("text")
+		.attr("x", 9)
+		.attr("dy", ".35em");
+	focus.append("circle")
+		.attr("r", 8)
+		.style("fill", "green");
+	var focus2 = svg.append("g")
+		.attr("id", "focus2")
+		.attr("class", "focus")
+		.style("display", "none");
+	focus2.append("text")
+		.attr("x", 9)
+		.attr("dy", ".35em");
+	focus2.append("circle")
+		.attr("r", 8)
+		.style("fill", "blue");
+	svg.append("rect")
+		.attr("class", "overlay")
+		.attr("width", WIDTH - MARGINS.right)
+		.attr("height", HEIGHT)
+		.on("mouseover", function() {
+			focus.style("display", null);
+			focus2.style("display", null);
+		})
+		.on("mouseout", function() {
+			focus.style("display", "none");
+			focus2.style("display", "none");
+		})
+		.on("mousemove", mousemove);
+
+	function mousemove() {
+		var coordinates = [0, 0];
+		coordinates = d3.mouse(this);
+		var x0 = coordinates[0];
+		var i = bisectDate(data, x0, 1);
+		var i1 = bisectDate(data2, x0, 1);
+		var	d = data[i-1];
+		var	d1 = data2[i1-1];
+		focus.attr("transform", "translate(" + xScale(d.year) + "," + yScale(d.sale) + ")");
+		focus.select("text").style("text-anchor", "start").text(d.sale);
+		focus2.attr("transform", "translate(" + xScale(d1.year) + "," + yScale(d1.sale) + ")");
+		focus2.select("text").text(d1.sale);
+	}
+
+</script>
+</body>
+</html>
