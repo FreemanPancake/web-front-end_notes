@@ -168,7 +168,7 @@
 	var xScale = d3.scaleLinear()
 	.range([MARGINS.left, WIDTH - MARGINS.right])
 	.domain([(d3.min(dataset.years)-1), (d3.max(dataset.years)+1)]);
-	var xAxis = d3.axisBottom(xScale);
+	var xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
 	svg.append("g")
 	.attr("id", "x-axes")
 	.attr("transform", "translate(0, " + (HEIGHT - MARGINS.bottom) + ")")
